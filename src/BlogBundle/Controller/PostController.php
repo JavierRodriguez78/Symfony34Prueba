@@ -44,11 +44,12 @@ class PostController extends Controller
         
         //Persistimos la entidad
       
-        $em->persist($post);
-        $em->flush();
+        //$em->persist($post);
+       // $em->flush();
+       $postRepositoryService = $this->get("app.post_repository");
+       $id= $postRepositoryService->createPost($post);
 
-
-        return new Response("Retorno post creado ->".$post->getId());
+        return new Response("Post creado ->".$id);
 
     }
 
@@ -57,11 +58,13 @@ class PostController extends Controller
      * @Route("/getAll")
      */
     public function getAllAction(){
+        $postRepositoryService = $this->get("app.post_repository");
 
         //Recuperar el Manager
-        $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository('BlogBundle:Post');
-        $posts = $repository->findAll();
+        //$em = $this->getDoctrine()->getManager();
+        //$repository = $em->getRepository('BlogBundle:Post');
+        //$posts = $repository->findAll();
+        $posts = $postRepositoryService->getAll();        
         return $this->render('@Blog/Default/posts.html.twig',['posts'=>$posts]);
     }
     /**
@@ -84,10 +87,12 @@ class PostController extends Controller
      */
     public function getPostById($id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repository= $em->getRepository("BlogBundle:Post");
-        $post = $repository->find($id);
-        return $this->render('@Blog/Default/post.html.twig',['post'=>$post]);
+        //$em = $this->getDoctrine()->getManager();
+        //$repository= $em->getRepository("BlogBundle:Post");
+        $postRepositoryService = $this->get("app.post_repository");
+        $post = $postRepositoryService->getById($id);
+        if ($post) return $this->render('@Blog/Default/post.html.twig',['post'=>$post]);
+        return new Response("No existe ningún post con el id ->".$id);    
     }
     /**
      * @Route("/findtitle/{title}")
@@ -122,15 +127,17 @@ class PostController extends Controller
      */
     public function deletePost($id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository('BlogBundle:Post');
-        $post = $repository->find($id);
-        if (!$post){
-            return new Response("No existe el post");
-        }
-        $em->remove($post);
-        $em->flush();
-        return new Response("Post Eliminado ->".$post->getId());
+        // $em = $this->getDoctrine()->getManager();
+        // $repository = $em->getRepository('BlogBundle:Post');
+        // $post = $repository->find($id);
+        // if (!$post){
+        //     return new Response("No existe el post");
+        // }
+        // $em->remove($post);
+        // $em->flush();
+        $postRepositoryService = $this->get("app.post_repository");
+        $post = $postRepositoryService->deletePost($id);
+        return new Response($post);
 
     }
      /**
@@ -138,15 +145,15 @@ class PostController extends Controller
      */
     public function updatePost($id)
     {
-        $em=$this->getDoctrine()->getManager();
-        $post = $em->getRepository("BlogBundle:Post")->find($id);
+        $postRepositoryService = $this->get("app.post_repository");
+        $post= $postRepositoryService->getById($id);    
         if (!$post){
             return new Response("No existe el post");
         }
         $post->setTitle("OtroPost");
-        $em->flush();
-        //return new Response("Post Actualizado ->".$post->getTitle());
-        return $this->redirect('/blog/post/getAll');
+       return ($postRepositoryService->updatePost($post) == true)
+       ? $this->redirect('/blog/post/getAll')
+       : new Response("Error en la actualización");
     }
 
 

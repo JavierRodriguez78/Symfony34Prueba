@@ -35,3 +35,13 @@ services:
     #         $someArgument: 'some_value'
     BlogBundle\DataFixtures\:
         resource: '../../src/BlogBundle/DataFixtures/'
+    
+    app.helpers:
+        class: AppBundle\Services\Helpers
+        arguments: ['null']
+        public: true
+
+    app.post_repository:
+        class: AppBundle\Services\PostRepository
+        arguments: ['@service_container','@doctrine.orm.entity_manager']
+        public: true
