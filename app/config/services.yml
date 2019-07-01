@@ -45,3 +45,7 @@ services:
         class: AppBundle\Services\PostRepository
         arguments: ['@service_container','@doctrine.orm.entity_manager']
         public: true
+    app.user_repository:
+        class: AppBundle\Services\UserRepository
+        arguments: ['@service_container','@doctrine.orm.entity_manager']
+        public: true

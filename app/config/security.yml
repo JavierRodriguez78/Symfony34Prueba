@@ -2,12 +2,16 @@
 # https://symfony.com/doc/current/security.html
 security:
 
+    encoders:
+        BlogBundle\Entity\User:
+            algorithm: bcrypt
+
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         entity_provider:
             entity:
                 class: 'BlogBundle\Entity\User'
-                property: 'username'
+                property: username
         
       
 
@@ -27,17 +31,24 @@ security:
             # https://symfony.com/doc/current/security/form_login_setup.html
             #form_login: ~
         login:
-            pattern:  ^/api/login
+            pattern:  ^/api/auth/login
             stateless: true
             anonymous: true
             json_login:
-                check_path:               /api/login_check
+                check_path:               /api/auth/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+
+        register:
+            pattern: ^/api/auth/register
+            stateless: true
+            anonymous: true
 
         api:
             pattern:   ^/api
             stateless: true
+            anonymous: false
+            provider: entity_provider
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator

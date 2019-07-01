@@ -30,6 +30,25 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @var string
+     * @ORM\Column(type="string",length=500)
+     */
+    private $password;
+
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=180)
+     */
+    private $name;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
     * @var string
     * @ORM\Column(name="mail", type="string", length=100, unique=true)
     */
@@ -43,8 +62,10 @@ class User implements UserInterface
     public $posts;
 
 
-    public function __construct()
+    public function __construct($username)
     {
+        $this->isActive = true;
+        $this->username = $username;
         $this->posts = new ArrayCollection();
     }
 
@@ -162,5 +183,67 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return User
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return User
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return User
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 }
